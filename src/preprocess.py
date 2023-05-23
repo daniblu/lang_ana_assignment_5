@@ -1,7 +1,7 @@
 print('[INFO]: Importing packages')
 # general tools
 import os
-import tqdm
+from tqdm import tqdm
 import argparse
 
 # for fetching data
@@ -35,18 +35,17 @@ def main(corpora):
     # load nlp pipeline from spacy
     nlp = spacy.load("en_core_web_md")
 
+    # final data frame
+    df = pd.DataFrame()
+
+    print('[INFO]: Analyzing transcripts')
     # loop over all transcripts
     for transcript in tqdm(transcripts):
-
-        print(f'[INFO]: analyzing transcript {transcript}')
 
         # fetch utterances for current transcript
         utterances = tbdb.getUtterances( {'corpusName': 'childes', 
                                           'corpora': [['childes', 'Eng-NA', 'Braunwald', transcript]],
                                           'lang': ['eng']} )
-    
-        # final data frame
-        df = pd.DataFrame()
 
         # extract info from transcript
         age = [list[0] for list in utterances['data']]
@@ -60,7 +59,7 @@ def main(corpora):
         # define lexical categories (parts of speech) of interest, assign empty list to each
         lex_cats = ['NOUN', 'VERB', 'ADJ', 'ADV', 'ADP', 'AUX', 'PRON', 'CCONJ', 'SCONJ', 'PROPN']
 
-        NOUN, VERB, ADJ, ADV, ADP, AUX, PRON, CCONJ, SCONJ, PROPN = [], [], [], [], [], [], [], [], [], [], []
+        NOUN, VERB, ADJ, ADV, ADP, AUX, PRON, CCONJ, SCONJ, PROPN = [], [], [], [], [], [], [], [], [], []
         lex_cat_lists = [NOUN, VERB, ADJ, ADV, ADP, AUX, PRON, CCONJ, SCONJ, PROPN]
 
         # define entity type of interest
@@ -69,12 +68,12 @@ def main(corpora):
         # loop over utterances (docs)
         for doc in docs:
 
-            # loop over each lexical categories
-            for lex_cat, list in lex_cats, lex_cat_lists:
+            # loop over lexical categories
+            for lex_cat, lex_cat_list in zip(lex_cats, lex_cat_lists):
 
                 # count number of words in utterance belonging to given lexical category 
                 count = np.sum( [1 for token in doc if token.pos_ == lex_cat] )
-                list.append(count)
+                lex_cat_list.append(count)
             
             # count number of PERSONS in utterance
             count = np.sum( [1 for ent in doc.ents if ent.label_ == "PERSON"] )
@@ -96,7 +95,7 @@ def main(corpora):
     df['role'] = ['child' if s == 'CHI' else 'child-directed' for s in df['speaker']]
 
     # summaries counts within groups of interest
-    df_sum = df.groupby(['age_collapsed', 'role']).sum()
+    df_sum = df.groupby(['age_collapsed', 'role']).sum(numeric_only = True)
 
     # calculate relative frequencies per 1000 words
     for category in lex_cats:
