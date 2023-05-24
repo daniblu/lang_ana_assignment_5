@@ -1,4 +1,6 @@
-numpy==1.24.3
-pandas==2.0.1
-spacy==3.5.3
-tqdm==4.65.0
+matplotlib==3.5.2
+numpy==1.22.3
+pandas==1.4.2
+spacy==3.5.0
+tbdb==0.0.8
+tqdm==4.64.0
