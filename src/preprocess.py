@@ -89,7 +89,7 @@ def main(corpora):
         df = pd.concat([df, df_temp])
 
     # group transcripts according to age of the child in months
-    df['age_collapsed'] = [a[1]+a[2:4] for a in df['age']]
+    df['age_collapsed'] = [a[1]+';'+a[2:4] for a in df['age']]
 
     # group non-child speakers
     df['role'] = ['child' if s == 'CHI' else 'child-directed' for s in df['speaker']]
@@ -98,6 +98,7 @@ def main(corpora):
     df_sum = df.groupby(['age_collapsed', 'role']).sum(numeric_only = True)
 
     # calculate relative frequencies per 1000 words
+    lex_cats.append('PER')
     for category in lex_cats:
         df_sum[f'{category}_freq'] = round((df_sum[category] / df_sum['utterance_len']) * 1000, 2)
     
