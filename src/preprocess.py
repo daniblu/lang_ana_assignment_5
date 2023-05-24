@@ -53,7 +53,6 @@ def main(corpus):
         age = [list[0] for list in utterances['data']]
         speaker = [list[3] for list in utterances['data']]
         utterance = [list[7] for list in utterances['data']]
-        length = [len(list[7]) for list in utterances['data']]
 
         # apply nlp pipeline to all utterances of transcript (one doc per utterance)
         docs = nlp.pipe(utterance, batch_size=20)
@@ -67,8 +66,15 @@ def main(corpus):
         # define entity type of interest
         PER = []
 
+        # empty list for storing length of utterance
+        length = []
+
         # loop over utterances (docs)
         for doc in docs:
+
+            # count length of utterance
+            count = len(doc)
+            length.append(count)
 
             # loop over lexical categories
             for lex_cat, lex_cat_list in zip(lex_cats, lex_cat_lists):
@@ -105,10 +111,10 @@ def main(corpus):
     # add mean length of utterance
     df_sum['mean_utt_len'] = round(mean_utt_len, 3)
 
-    # calculate relative frequencies per 1000 words
+    # calculate relative frequencies per 10,000 words
     lex_cats.append('PER')
     for category in lex_cats:
-        df_sum[f'{category}_freq'] = round((df_sum[category] / df_sum['utterance_len']) * 1000, 2)
+        df_sum[f'{category}_freq'] = round((df_sum[category] / df_sum['utterance_len']) * 10000, 3)
     
     # save dataframe
     outpath = os.path.join("..", "data", f"{corpus[-1]}.csv")

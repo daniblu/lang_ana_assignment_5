@@ -30,7 +30,7 @@ def nlp_plot(data, dataset, measure, figsize, freq=True):
     plt.xlabel("Years;Months")
     if freq:
         plt.title(measure.replace('_freq', '') ) 
-        ylabel = "Relative frequency per 1000 words"
+        ylabel = "Relative frequency per 10,000 words"
         plt.ylabel(ylabel)
     else: plt.title('Mean Length of Utterance') 
 
@@ -74,7 +74,7 @@ def main(dataset, figsize):
     plt.legend()
     plt.title(f"PROPN and PERSON")
     plt.xlabel("Years;Months")
-    plt.ylabel("Relative frequency per 1000 words")
+    plt.ylabel("Relative frequency per 10,000 words")
 
     plt.savefig(os.path.join('..','plots',f"{dataset.replace('.csv','')}_PROPN-PER.png"))
 
