@@ -17,22 +17,24 @@ import pandas as pd
 def input_parse():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--corpora", nargs='+', type=str, default=['childes', 'Eng-NA', 'Braunwald'], 
+    parser.add_argument("--corpus", nargs='+', type=str, default=['childes', 'Eng-NA', 'Braunwald'], 
                         help='Path (space seperated) to the transcripts in the CHILDES database, default = childes Eng-NA Braunwald')
     
     args = parser.parse_args()
         
     return(args)
 
-def main(corpora):
+def main(corpus):
     
     # fecth meta data
+    print('[INFO]: Fetching names of transcripts from CHILDES')
     transcripts = tbdb.getTranscripts( {'corpusName': 'childes', 
-                                        'corpora': [corpora]} )
+                                        'corpora': [corpus]} )
     
     transcripts = [transcript[1] for transcript in transcripts['data']]
 
     # load nlp pipeline from spacy
+    print('[INFO]: Downloading spaCy pipeline')
     nlp = spacy.load("en_core_web_md")
 
     # final data frame
@@ -94,8 +96,14 @@ def main(corpora):
     # group non-child speakers
     df['role'] = ['child' if s == 'CHI' else 'child-directed' for s in df['speaker']]
 
-    # summaries counts within groups of interest
+    # calculate mean length of utterance
+    mean_utt_len = df.groupby(['age_collapsed', 'role'])['utterance_len'].mean()
+
+    # summarise counts within groups
     df_sum = df.groupby(['age_collapsed', 'role']).sum(numeric_only = True)
+
+    # add mean length of utterance
+    df_sum['mean_utt_len'] = round(mean_utt_len, 3)
 
     # calculate relative frequencies per 1000 words
     lex_cats.append('PER')
@@ -103,9 +111,9 @@ def main(corpora):
         df_sum[f'{category}_freq'] = round((df_sum[category] / df_sum['utterance_len']) * 1000, 2)
     
     # save dataframe
-    outpath = os.path.join("..", "data", f"{corpora[-1]}.csv")
+    outpath = os.path.join("..", "data", f"{corpus[-1]}.csv")
     df_sum.to_csv(outpath)
 
 if __name__ == "__main__":
     args = input_parse()
-    main(args.corpora)
+    main(args.corpus)
