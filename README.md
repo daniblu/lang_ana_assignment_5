@@ -7,7 +7,7 @@ The task of this assignment is defined by the student. The following section des
 The goal of this repository is to investigate childrens' use of selected word classes (aka. parts of speech) during the years of first-language acquisition as well as to track the equivalent for child-directed speech. Some related questions are: Which word classes does a child familiarize itself with faster? What is the learning trajectory and how does it differ among word classes? Does change in child-directed speech reflect the child's increasing langauge expertise?
 
 ## Solution
-All code written for this assignment is within ``src``. Here follows a description of the functionality of all the scripts in the folder.
+All code written for this assignment is within ``src``.  _The scripts assume that ``src`` is the working directory_. Here follows a description of the functionality of all the scripts in the folder.
 
 - __preprocess.py__: The script fetches the transcripts of a user-defined corpus from the [CHILDES](https://sla.talkbank.org/TBB/childes) database - a database of transcribed child language - using the [Python API](https://github.com/TalkBank/TBDBpy) to TalkBankDB. The database path can be set from the terminal when running the script, e.g., ``python3 preprocess.py --corpus childes Eng-NA Braunwald`` which is the default corpus and the one visualised in the results section. The utterances of the transcripts are subjected to part-of-speech tagging and named entity recognition using ``spaCy``'s nlp pipeline [en_core_web_md](https://spacy.io/models/en#en_core_web_md). The script outputs a ``.csv`` in the ``data`` folder, indicating change in relative freqency per 10,000 words for selected word classes in both child speech and child-directed speech. The selected word classes are: ADJ (adjective), ADP (adposition), ADV (adverb), AUX (auxiliary), CCONJ (coordinating conjunction), NOUN, PRON (pronoun), PROPN (proper noun), SCONJ (subordinating conjunction), and VERB. See [Jurafsky & Martin (2023)](https://web.stanford.edu/~jurafsky/slp3/8.pdf) for definitions of word classes. Additionally, the relative frequency of named entities referring to people is also included, as well as the total amount of words spoken (_utterance\_len_) and the mean length of utterances (_mean\_utt\_len_). 
 
@@ -42,3 +42,16 @@ The opposite trend is seen in the case of nouns and proper nouns. Here, the word
 For the rest of the word classes (ADJ, ADV, and VERB) there is not a clear trend of child speech slowly aligning with child-directed speech. Rather, the relative frequency for both types of speech seem to be at similar levels across all ages.
 
 This investigation has a few limitations. Note, that not all utterances from a non-child speaker may be child-directed, as they are coded as here. Sometimes the parents might be speaking to each other, to the recorder or to the older sister of the target child. However, this is only the case for a small number of the utterances. The age of the sister is not recorded in the meta data of the corpus. Judging from the recordings she might initially be less than 10 years old. In this investigation her utterances are included and coded as "child-directed speech", but considerations should be made whether this is appropriate if the sister is a child herself. Lastly, this investiagtion is only based on one child, thus, generalizations are not appropriate. However, the repository lents itself to expanding the investigation by being applicable to other corpora in the CHILDES database. 
+
+## Setup
+The scripts require the following to be run from the terminal:
+
+```shell
+bash setup.sh
+```
+
+This will create a virtual environment, ```assignment5_env``` (git ignored), to which the packages listed in ```requirements.txt``` will be downloaded. __Note__, ```setup.sh``` works only on computers running POSIX. Remember to activate the environment running the following line in a terminal before changing the working directory to ```src``` and running the scripts.
+
+```shell 
+source ./assignment5_env/bin/activate
+```
