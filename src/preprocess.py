@@ -57,11 +57,11 @@ def main(corpus):
         # apply nlp pipeline to all utterances of transcript (one doc per utterance)
         docs = nlp.pipe(utterance, batch_size=20)
 
-        # define lexical categories (parts of speech) of interest, assign empty list to each
-        lex_cats = ['NOUN', 'VERB', 'ADJ', 'ADV', 'ADP', 'AUX', 'PRON', 'CCONJ', 'SCONJ', 'PROPN']
+        # define word classes (parts of speech) of interest, assign empty list to each
+        w_classes = ['NOUN', 'VERB', 'ADJ', 'ADV', 'ADP', 'AUX', 'PRON', 'CCONJ', 'SCONJ', 'PROPN']
 
         NOUN, VERB, ADJ, ADV, ADP, AUX, PRON, CCONJ, SCONJ, PROPN = [], [], [], [], [], [], [], [], [], []
-        lex_cat_lists = [NOUN, VERB, ADJ, ADV, ADP, AUX, PRON, CCONJ, SCONJ, PROPN]
+        w_class_lists = [NOUN, VERB, ADJ, ADV, ADP, AUX, PRON, CCONJ, SCONJ, PROPN]
 
         # define entity type of interest
         PER = []
@@ -76,12 +76,12 @@ def main(corpus):
             count = len(doc)
             length.append(count)
 
-            # loop over lexical categories
-            for lex_cat, lex_cat_list in zip(lex_cats, lex_cat_lists):
+            # loop over word classes
+            for w_class, w_class_list in zip(w_classes, w_class_lists):
 
-                # count number of words in utterance belonging to given lexical category 
-                count = np.sum( [1 for token in doc if token.pos_ == lex_cat] )
-                lex_cat_list.append(count)
+                # count number of words in utterance belonging to given word class
+                count = np.sum( [1 for token in doc if token.pos_ == w_class] )
+                w_class_list.append(count)
             
             # count number of PERSONS in utterance
             count = np.sum( [1 for ent in doc.ents if ent.label_ == "PERSON"] )
@@ -112,9 +112,9 @@ def main(corpus):
     df_sum['mean_utt_len'] = round(mean_utt_len, 3)
 
     # calculate relative frequencies per 10,000 words
-    lex_cats.append('PER')
-    for category in lex_cats:
-        df_sum[f'{category}_freq'] = round((df_sum[category] / df_sum['utterance_len']) * 10000, 3)
+    w_classes.append('PER')
+    for cls in w_classes:
+        df_sum[f'{cls}_freq'] = round((df_sum[cls] / df_sum['utterance_len']) * 10000, 3)
     
     # save dataframe
     outpath = os.path.join("..", "data", f"{corpus[-1]}.csv")

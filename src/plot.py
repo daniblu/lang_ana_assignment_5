@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 def input_parse():
     parser=argparse.ArgumentParser()
     parser.add_argument("--dataset", type=str, default='Braunwald.csv', help="dataset to be visualised, default=Braunwald.csv")
-    parser.add_argument("--figsize", type=int, nargs='+', default=[9,5], help="choose appropriate figure size, default=(9,5)")
+    parser.add_argument("--figsize", type=int, nargs='+', default=[9,5], help="choose appropriate figure size: length height, default= 9 5")
     args = parser.parse_args()
 
     return(args)
